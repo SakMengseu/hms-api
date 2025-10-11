@@ -15,27 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-        // Create permissions
-        Permission::create(['name' => 'view posts']);
-        Permission::create(['name' => 'edit posts']);
-
-        // Create roles and assign permissions
-        $admin = Role::create(['name' => 'administrator']);
-        $admin->givePermissionTo(['view posts', 'edit posts']);
-
-        $user = Role::create(['name' => 'user']);
-        $user->givePermissionTo('view posts');
-
-        // Assign role to a user (example)
-        $user = \App\Models\User::first();
-        if ($user) {
-            $user->assignRole('administrator');
-        }
+        $this->call([
+            PermissionSeeder::class,
+            RoleSeeder::class,
+        ]);
     }
 }
