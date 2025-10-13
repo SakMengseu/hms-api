@@ -36,11 +36,13 @@ class RoleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|unique:roles,name',
-            'permissions' => 'required|array|min:1',
-            'permissions.*' => 'string|exists:permissions,name',
+            'description' => 'nullable|string',
+            'permissions' => 'required|array',
+            'permissions.*' => 'exists:permissions,id',
         ]);
 
-        $role = Role::create(['name' => $validated['name']]);
+        $role = Role::create($validated);
+
         $role->syncPermissions($validated['permissions']);
 
         return response()->json([
@@ -48,6 +50,7 @@ class RoleController extends Controller
             'data' => $role->load('permissions'),
         ], 201);
     }
+
 
     // ✅ Show a single role with permissions
     public function show($id)
