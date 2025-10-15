@@ -9,13 +9,19 @@ use Illuminate\Support\Str;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class RoleController extends Controller
 {
     // ✅ Get all roles with permissions
     public function index()
     {
-        $roles = Role::with('permissions')->get();
+        //     $roles = Role::with('permissions')->get();
+        $roles =   QueryBuilder::for(Role::class)
+            ->allowedFilters('name')
+            ->with('permissions')
+            ->allowedIncludes('permissions')
+            ->get();
         return response()->json($roles);
     }
 
@@ -66,8 +72,8 @@ class RoleController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', Rule::unique('roles')->ignore($role->id)],
-            'permissions' => 'required|array|min:1',
-            'permissions.*' => 'string|exists:permissions,name',
+            'permissions' => 'required|array',
+            'permissions.*' => 'integer|exists:permissions,id',
         ]);
 
         $role->update(['name' => $validated['name']]);

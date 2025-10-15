@@ -9,13 +9,22 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
     // ✅ Get all users
     public function index()
     {
-        $users = User::with('roles')->latest()->paginate(10);
+        // $users = User::with('roles')->latest()->paginate(10);
+
+        $users = QueryBuilder::for(User::class)
+            ->with('roles')
+            ->allowedFilters(['name', 'email', 'roles:name'])
+            ->defaultSort('-created_at')
+            ->paginate(25)
+            ->appends(request()->query());
+
         return response()->json($users);
     }
 
