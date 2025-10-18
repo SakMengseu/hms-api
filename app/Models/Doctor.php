@@ -13,14 +13,42 @@ class Doctor extends Model
 
     protected $fillable = [
         'user_id',
+        'first_name',
+        'last_name',
+        'full_name',
+        'gender',
+        'date_of_birth',
+        'phone',
+        'email',
         'specialty',
         'license_number',
         'department',
         'experience_years',
+        'province_id',
+        'district_id',
+        'commune_id',
+        'village_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function province()
+    {
+        return $this->belongsTo(Province::class);
+    }
+    public function district()
+    {
+        return $this->belongsTo(District::class);
+    }
+    public function commune()
+    {
+        return $this->belongsTo(Commune::class);
+    }
+    public function village()
+    {
+        return $this->belongsTo(Village::class);
     }
 }

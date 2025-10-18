@@ -1,0 +1,37 @@
+### Create new doctor
+POST http://127.0.0.1:8000/api/v1/doctors
+Content-Type: application/json
+Accept: application/json
+
+{
+    "first_name": "Chan",
+    "last_name": "Dara",
+    "full_name": "Chan Dara",
+    "gender": "Female",
+    "date_of_birth": "1985-11-15",
+    "phone": "098765432",
+    "email": "chandara@example.com",
+    "specialty": "Neurology",
+    "license_number": "LIC67890",
+    "department": "Brain Center",
+    "experience_years": 15
+}
+
+### Update existing doctor
+PUT http://127.0.0.1:8000/api/v1/doctors/1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "first_name": "Chan",
+    "last_name": "Dara",
+    "full_name": "Chan Dara",
+    "gender": "Female",
+    "date_of_birth": "1985-11-15",
+    "phone": "098765432",
+    "email": "chandara@example.com",
+    "specialty": "Neurology",
+    "license_number": "LIC67890",
+    "department": "Brain Center",
+    "experience_years": 15
+}

@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\DoctorResource;
 use App\Models\Doctor;
+use App\Models\User;
 use Illuminate\Http\Request;
+use PhpParser\Comment\Doc;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class DoctorController extends Controller
@@ -20,7 +23,8 @@ class DoctorController extends Controller
             ->paginate($request->get('per_page', 15))
             ->appends($request->query());
 
-        return response()->json($doctors);
+        
+        return DoctorResource::collection($doctors);
     }
 
     /**
@@ -28,24 +32,48 @@ class DoctorController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
-            'specialty' => 'required|string|max:255',
-            'license_number' => 'required|string|max:255',
-            'department' => 'required|string|max:255',
-            'experience_years' => 'required|integer',
+        // ✅ 1. Validate input
+        $validated = $request->validate([
+            'first_name'        => 'required|string|max:255',
+            'last_name'         => 'required|string|max:255',
+            'gender'            => 'required|string|max:10',
+            'date_of_birth'     => 'required|date',
+            'phone'             => 'required|string|max:20',
+            'email'             => 'required|string|email|max:255|unique:users,email',
+            'specialty'         => 'nullable|string|max:255',
+            'license_number'    => 'nullable|string|max:255|unique:doctors,license_number',
+            'department'        => 'nullable|string|max:255',
+            'experience_years'  => 'nullable|integer',
+            // 'province_id'       => 'nullable|integer|exists:provinces,id',
+            // 'district_id'       => 'nullable|integer|exists:districts,id',
+            // 'commune_id'        => 'nullable|integer|exists:communes,id',
+            // 'village_id'        => 'nullable|integer|exists:villages,id',
         ]);
 
-        $doctor = Doctor::create($validator);
+        // ✅ 2. Create User record
+        $user = User::create([
+            'name'     => $validated['first_name'] . ' ' . $validated['last_name'],
+            'email'    => $validated['email'],
+            'password' => bcrypt('defaultpassword'), // or generate a random password
+        ]);
 
-        return response()->json(
-            [
-                'message' => 'Doctor created successfully',
-                'doctor' => $doctor
-            ],
-            201
-        );
+        // ✅ 3. Add extra fields for Doctor
+        $validated['full_name'] = $validated['first_name'] . ' ' . $validated['last_name'];
+        $validated['user_id'] = $user->id;
+
+        //sync roles
+        $user->syncRoles(['doctor']);
+
+        // ✅ 4. Create Doctor record
+        $doctor = Doctor::create($validated);
+
+        // ✅ 5. Return JSON response
+        return response()->json([
+            'message' => 'Doctor created successfully',
+            'doctor'  => $doctor
+        ], 201);
     }
+
 
     /**
      * Display the specified resource.
@@ -73,12 +101,25 @@ class DoctorController extends Controller
         }
 
         $validator = $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
-            'specialty' => 'sometimes|string|max:255',
-            'license_number' => 'sometimes|string|max:255',
-            'department' => 'sometimes|string|max:255',
-            'experience_years' => 'sometimes|integer',
+            'first_name'        => 'required|string|max:255',
+            'last_name'         => 'required|string|max:255',
+            'gender'            => 'required|string|max:10',
+            'date_of_birth'     => 'required|date',
+            'phone'             => 'required|string|max:20',
+            'email'             => 'required|string|email|max:255',
+            'specialty'         => 'nullable|string|max:255',
+            'license_number'    => 'nullable|string|max:255',
+            'department'        => 'nullable|string|max:255',
+            'experience_years'  => 'nullable|integer',
+            'province_id'       => 'nullable|integer|exists:provinces,id',
+            'district_id'       => 'nullable|integer|exists:districts,id',
+            'commune_id'        => 'nullable|integer|exists:communes,id',
+            'village_id'        => 'nullable|integer|exists:villages,id',
         ]);
+
+        // create full_name field
+        $full_name = $request->input('first_name') . ' ' . $request->input('last_name');
+        $validator['full_name'] = $full_name;
 
         $doctor->update($validator);
 
