@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('provinces', function (Blueprint $table) {
             $table->id();
             $table->uuid()->unique();
-
-            $table->string('code')->unique()->nullable();
-            $table->string('number')->unique()->nullable();
+            
+            $table->string('code')->nullable();
+            $table->string('number')->nullable();
             $table->string('name', 2000)->nullable();
             $table->string('latin_name', 2000)->nullable();
             $table->string('full_name', 2000)->nullable();
