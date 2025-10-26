@@ -23,7 +23,8 @@ class DoctorController extends Controller
             ->paginate($request->get('per_page', 15))
             ->appends($request->query());
 
-        
+        return response()->json($doctors);   
+
         return DoctorResource::collection($doctors);
     }
 
@@ -44,10 +45,10 @@ class DoctorController extends Controller
             'license_number'    => 'nullable|string|max:255|unique:doctors,license_number',
             'department'        => 'nullable|string|max:255',
             'experience_years'  => 'nullable|integer',
-            // 'province_id'       => 'nullable|integer|exists:provinces,id',
-            // 'district_id'       => 'nullable|integer|exists:districts,id',
-            // 'commune_id'        => 'nullable|integer|exists:communes,id',
-            // 'village_id'        => 'nullable|integer|exists:villages,id',
+            'province_id'       => 'nullable|integer|exists:provinces,id',
+            'district_id'       => 'nullable|integer|exists:districts,id',
+            'commune_id'        => 'nullable|integer|exists:communes,id',
+            'village_id'        => 'nullable|integer|exists:villages,id',
         ]);
 
         // ✅ 2. Create User record
@@ -81,6 +82,7 @@ class DoctorController extends Controller
     public function show(string $id)
     {
         $doctor = Doctor::find($id);
+
 
         if (!$doctor) {
             return response()->json(['message' => 'Doctor not found'], 404);

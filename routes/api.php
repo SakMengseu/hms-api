@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Auth\RoleController;
 use App\Http\Controllers\Api\V1\Auth\UserController;
 use App\Http\Controllers\Api\V1\CommuneController;
+use App\Http\Controllers\Api\V1\Data\DataController;
 use App\Http\Controllers\Api\V1\DiseaseController;
 use App\Http\Controllers\Api\V1\DistrictController;
 use App\Http\Controllers\Api\V1\ProvinceController;
@@ -13,8 +14,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
-
 
 
 Route::prefix('v1')->group(function () {
@@ -35,7 +34,7 @@ Route::prefix('v1')->group(function () {
     // Permissions list
     Route::get('/permissions', [RoleController::class, 'permissions']);
 
-    
+
 
     // Cambodia Administrative Divisions
     Route::apiResource('provinces', ProvinceController::class);
@@ -77,4 +76,16 @@ Route::prefix('v1')->group(function () {
 
     // Payment Management
     Route::apiResource('payments', \App\Http\Controllers\Api\V1\PaymentController::class);
+});
+
+// DATA ENDPOINTS
+Route::prefix('v1/data')->group(function () {
+    // ✅ Get all Cambodia DATA
+    Route::get('/provinces', [DataController::class, 'provinces']);
+    Route::get('/districts/{provinceId}', [DataController::class, 'districts']);
+    Route::get('/communes/{districtId}', [DataController::class, 'communes']);
+    Route::get('/villages/{communeId}', [DataController::class, 'villages']);
+
+
+    Route::get('/patients', [DataController::class, 'patients']);
 });
