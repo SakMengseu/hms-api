@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('code', 100)->nullable()->unique('uq_patient_code');
             $table->string('full_name', 100)->nullable();
             $table->string('latin_name', 100)->nullable();
-            $table->enum('gender', ['MALE', 'FEMALE', 'OTHER'])->nullable();
+            $table->enum('gender', ['Male', 'Female', 'Other'])->nullable();
             $table->date('dob')->nullable();
             $table->string('phone', 20)->nullable()->index('idx_patient_phone');
             $table->string('nationality', 100)->nullable();

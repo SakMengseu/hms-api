@@ -7,6 +7,19 @@ use Illuminate\Support\Str;
 
 trait GeneratesPatientCode
 {
+
+    /**
+     * Boot the trait
+     */
+    protected static function bootGeneratesPatientCode()
+    {
+        static::creating(function ($model) {
+            if (empty($model->code)) {
+                $model->code = $model->generatePatientCode();
+            }
+        });
+    }
+    
     /**
      * Generate the next patient code in format P-00001
      */

@@ -21,8 +21,8 @@ class PatientController extends Controller
 
         $patients = QueryBuilder::for(Patient::class)
             ->with(['diseases', 'user', 'province', 'district', 'commune', 'village'])
-            ->allowedFilters(['user_id', 'code', 'full_name', 'phone_number'])
-            ->allowedSorts(['id', 'user_id', 'code', 'full_name', 'phone_number', 'created_at'])
+            ->allowedFilters(['user_id', 'code', 'full_name', 'phone'])
+            ->allowedSorts(['id', 'user_id', 'code', 'full_name', 'phone', 'created_at'])
             ->paginate($request->get('per_page', 15))
             ->appends($request->query());
 
@@ -40,14 +40,13 @@ class PatientController extends Controller
             'latin_name' => 'sometimes|nullable|string|max:255',
             'gender' => 'required|string|max:255',
             'dob' => 'required|date',
-            'phone' => 'sometimes|nullable|string|max:20',
+            'phone' => 'required|string|max:20',
             'nationality' => 'sometimes|nullable|string|max:255',
-            'year_of_diagnosis' => 'sometimes|nullable|date',
+            'year_of_diagnosis' => 'sometimes|nullable',
             'occupation' => 'sometimes|nullable|string|max:255',
             'status' => 'sometimes|nullable|string|max:255',
             'address' => 'sometimes|nullable|string|max:255',
             'note' => 'sometimes|nullable|string|max:255',
-            'phone_number' => 'required|string|max:255',
             'province_id' => 'sometimes|exists:provinces,id',
             'district_id' => 'sometimes|exists:districts,id',
             'commune_id' => 'sometimes|exists:communes,id',
@@ -104,14 +103,13 @@ class PatientController extends Controller
             'latin_name' => 'sometimes|nullable|string|max:255',
             'gender' => 'sometimes|required|string|max:255',
             'dob' => 'sometimes|required|date',
-            'phone' => 'sometimes|nullable|string|max:20',
+            'phone' => 'required|string|max:20',
             'nationality' => 'sometimes|nullable|string|max:255',
             'year_of_diagnosis' => 'sometimes|nullable|date',
             'occupation' => 'sometimes|nullable|string|max:255',
             'status' => 'sometimes|nullable|string|max:255',
             'address' => 'sometimes|nullable|string|max:255',
             'note' => 'sometimes|nullable|string|max:255',
-            'phone_number' => 'sometimes|required|string|max:255',
             'province_id' => 'sometimes|exists:provinces,id',
             'district_id' => 'sometimes|exists:districts,id',
             'commune_id' => 'sometimes|exists:communes,id',
