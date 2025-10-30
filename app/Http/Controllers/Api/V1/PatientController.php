@@ -99,25 +99,25 @@ class PatientController extends Controller
     {
         $validator = $request->validate([
             'user_id' => 'sometimes|nullable|exists:users,id',
-            'full_name' => 'sometimes|required|string|max:255',
+            'full_name' => 'required|string|max:255',
             'latin_name' => 'sometimes|nullable|string|max:255',
-            'gender' => 'sometimes|required|string|max:255',
-            'dob' => 'sometimes|required|date',
+            'gender' => 'required|string|max:255',
+            'dob' => 'required|date',
             'phone' => 'required|string|max:20',
             'nationality' => 'sometimes|nullable|string|max:255',
-            'year_of_diagnosis' => 'sometimes|nullable|date',
+            'year_of_diagnosis' => 'sometimes|nullable|numeric',
             'occupation' => 'sometimes|nullable|string|max:255',
             'status' => 'sometimes|nullable|string|max:255',
             'address' => 'sometimes|nullable|string|max:255',
             'note' => 'sometimes|nullable|string|max:255',
-            'province_id' => 'sometimes|exists:provinces,id',
-            'district_id' => 'sometimes|exists:districts,id',
-            'commune_id' => 'sometimes|exists:communes,id',
-            'village_id' => 'sometimes|exists:villages,id',
+            'province_id' => 'sometimes|nullable|integer|exists:provinces,id',
+            'district_id' => 'sometimes|nullable|integer|exists:districts,id',
+            'commune_id'  => 'sometimes|nullable|integer|exists:communes,id',
+            'village_id'  => 'sometimes|nullable|integer|exists:villages,id',
 
-            'disease' => 'sometimes|array',
-            'disease.*.disease_id' => 'required|exists:diseases,id',
-            'disease.*.diagnosed_date' => 'nullable|date',
+            'diseases' => 'sometimes|array',
+            'diseases.*.disease_id' => 'required|exists:diseases,id',
+            'diseases.*.diagnosed_date' => 'nullable|date',
         ]);
 
 

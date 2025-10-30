@@ -13,22 +13,22 @@ class Disease extends Model
 
     protected $table = 'diseases';
 
-    protected $fillable = [
-        'id',
-        'name',
-        'description',
-    ];
-    protected $hidden = [
+        protected $fillable = [
+            'id',
+            'name',
+            'description',
+        ];
+        protected $hidden = [
 
-        'deleted_at',
-        'created_at',
-        'updated_at',
-    ];
+            'deleted_at',
+            'created_at',
+            'updated_at',
+        ];
 
-    public function patients()
-    {
-        return $this->belongsToMany(Patient::class, 'patient_diseases', 'disease_id', 'patient_id')
-            ->withPivot('diagnosed_date')
-            ->withTimestamps();
-    }
+        public function patients()
+        {
+            return $this->belongsToMany(Patient::class, 'patient_diseases', 'disease_id', 'patient_id')
+                ->withPivot('diagnosed_date')
+                ->withTimestamps();
+        }
 }
