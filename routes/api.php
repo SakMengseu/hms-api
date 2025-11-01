@@ -82,9 +82,9 @@ Route::prefix('v1')->group(function () {
 Route::prefix('v1/data')->group(function () {
     // ✅ Get all Cambodia DATA
     Route::get('/provinces', [DataController::class, 'provinces']);
-    Route::get('/districts/{provinceId}', [DataController::class, 'districts']);
-    Route::get('/communes/{districtId}', [DataController::class, 'communes']);
-    Route::get('/villages/{communeId}', [DataController::class, 'villages']);
+    Route::get('/districts/{provinceId?}', [DataController::class, 'districts']); 
+    Route::get('/communes/{districtId?}', [DataController::class, 'communes']);   
+    Route::get('/villages/{communeId?}', [DataController::class, 'villages']);  
 
 
     Route::get('/patients', [DataController::class, 'patients']);

@@ -58,7 +58,7 @@ class PatientController extends Controller
         ]);
 
 
-        DB::transaction(function () use ($validator, $request) {
+       
             $patient = Patient::create($validator);
             // dd($request->diseases);
             if ($request->filled('diseases')) {
@@ -75,7 +75,7 @@ class PatientController extends Controller
                 'message' => 'Patient created successfully',
                 'patient' => $patient->load('diseases'),
             ], 201);
-        });
+      
     }
 
     /**
@@ -83,7 +83,7 @@ class PatientController extends Controller
      */
     public function show(string $id)
     {
-        $patient = Patient::with(['diseases', 'user', 'province', 'district', 'commune', 'village'])->find($id);
+        $patient = Patient::with(['diseases', 'user', ])->find($id);
 
         if (!$patient) {
             return response()->json(['message' => 'Patient not found'], 404);

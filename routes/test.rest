@@ -35,3 +35,8 @@ Accept: application/json
     "department": "Brain Center",
     "experience_years": 15
 }
+
+### Update existing doctor
+GET  http://127.0.0.1:8000/api/v1/data/districts 
+Content-Type: application/json
+Accept: application/json

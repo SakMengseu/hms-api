@@ -26,36 +26,49 @@ class DataController extends Controller
         $provinces = QueryBuilder::for(Province::class)
             ->allowedFilters(['name'])
             ->get(['id', 'name']);
+
         return response()->json($provinces);
     }
 
-    // ✅ Get all districts by province id
-    public function districts($provinceId)
+    // ✅ Get all districts (optionally filtered by province)
+    public function districts($provinceId = null)
     {
-        $districts = QueryBuilder::for(District::class)
-            ->allowedFilters(['name', 'province_id'])
-            ->where('province_id', $provinceId)
-            ->get(['id', 'name']);
+        $query = QueryBuilder::for(District::class)
+            ->allowedFilters(['name', 'province_id']);
+
+        if ($provinceId) {
+            $query->where('province_id', $provinceId);
+        }
+
+        $districts = $query->get(['id', 'name', 'province_id']);
         return response()->json($districts);
     }
 
-    // ✅ Get all communes by district id
-    public function communes($districtId)
+    // ✅ Get all communes (optionally filtered by district)
+    public function communes($districtId = null)
     {
-        $communes = QueryBuilder::for(Commune::class)
-            ->allowedFilters(['name', 'district_id'])
-            ->where('district_id', $districtId)
-            ->get(['id', 'name']);
+        $query = QueryBuilder::for(Commune::class)
+            ->allowedFilters(['name', 'district_id']);
+
+        if ($districtId) {
+            $query->where('district_id', $districtId);
+        }
+
+        $communes = $query->get(['id', 'name', 'district_id']);
         return response()->json($communes);
     }
 
-    // ✅ Get all villages by commune id
-    public function villages($communeId)
+    // ✅ Get all villages (optionally filtered by commune)
+    public function villages($communeId = null)
     {
-        $villages = QueryBuilder::for(Village::class)
-            ->allowedFilters(['name', 'commune_id'])
-            ->where('commune_id', $communeId)
-            ->get(['id', 'name']);
+        $query = QueryBuilder::for(Village::class)
+            ->allowedFilters(['name', 'commune_id']);
+
+        if ($communeId) {
+            $query->where('commune_id', $communeId);
+        }
+
+        $villages = $query->get(['id', 'name', 'commune_id']);
         return response()->json($villages);
     }
 }
