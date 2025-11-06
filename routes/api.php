@@ -47,6 +47,12 @@ Route::prefix('v1')->group(function () {
 
     // Patient Management
     Route::apiResource('diseases', DiseaseController::class);
+
+    //Assign Diseases to Patient
+    Route::post('patients/{id}/assign-diseases', [\App\Http\Controllers\Api\V1\PatientDiseaseController::class, 'assignDiseases']);
+    Route::put('patients/{id}/update-diseases', [\App\Http\Controllers\Api\V1\PatientDiseaseController::class, 'updateDiseases']);
+    Route::delete('patients/{id}/remove-diseases', [\App\Http\Controllers\Api\V1\PatientDiseaseController::class, 'removeDiseases']);
+
     Route::apiResource('patients', \App\Http\Controllers\Api\V1\PatientController::class);
 
     // Life Style Management
@@ -82,9 +88,9 @@ Route::prefix('v1')->group(function () {
 Route::prefix('v1/data')->group(function () {
     // ✅ Get all Cambodia DATA
     Route::get('/provinces', [DataController::class, 'provinces']);
-    Route::get('/districts/{provinceId?}', [DataController::class, 'districts']); 
-    Route::get('/communes/{districtId?}', [DataController::class, 'communes']);   
-    Route::get('/villages/{communeId?}', [DataController::class, 'villages']);  
+    Route::get('/districts/{provinceId?}', [DataController::class, 'districts']);
+    Route::get('/communes/{districtId?}', [DataController::class, 'communes']);
+    Route::get('/villages/{communeId?}', [DataController::class, 'villages']);
 
 
     Route::get('/patients', [DataController::class, 'patients']);

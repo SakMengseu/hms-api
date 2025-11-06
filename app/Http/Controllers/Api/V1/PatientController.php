@@ -58,24 +58,68 @@ class PatientController extends Controller
         ]);
 
 
-       
-            $patient = Patient::create($validator);
-            // dd($request->diseases);
-            if ($request->filled('diseases')) {
-                $pivotData = [];
-                foreach ($request->diseases as $d) {
-                    $pivotData[$d['disease_id']] = [
-                        'diagnosed_date' => $d['diagnosed_date'] ?? now()->toDateString(),
-                    ];
-                }
-                $patient->diseases()->attach($pivotData);
-                Log::info('Patient diseases attached', ['result' => array_keys($pivotData)]);
+
+        $patient = Patient::create($validator);
+        // dd($request->diseases);
+        if ($request->filled('diseases')) {
+            $pivotData = [];
+            foreach ($request->diseases as $d) {
+                $pivotData[$d['disease_id']] = [
+                    'diagnosed_date' => $d['diagnosed_date'] ?? now()->toDateString(),
+                ];
             }
-            return response()->json([
-                'message' => 'Patient created successfully',
-                'patient' => $patient->load('diseases'),
-            ], 201);
-      
+            $patient->diseases()->attach($pivotData);
+            Log::info('Patient diseases attached', ['result' => array_keys($pivotData)]);
+        }
+        return response()->json([
+            'message' => 'Patient created successfully',
+            'patient' => $patient->load('diseases'),
+        ], 201);
+    }
+
+    /**
+     * Assign diseases to patient
+     */
+    public function assignDiseases(Request $request, string $id)
+    {
+        $validator = $request->validate([
+            'diseases' => 'required|array',
+            'diseases.*.disease_id' => 'required|exists:diseases,id',
+            'diseases.*.diagnosed_date' => 'nullable|date',
+        ]);
+
+        $patient = Patient::findOrFail($id);
+
+        $pivotData = [];
+        foreach ($validator['diseases'] as $d) {
+            $pivotData[$d['disease_id']] = [
+                'diagnosed_date' => $d['diagnosed_date'] ?? now()->toDateString(),
+            ];
+        }
+
+        $patient->diseases()->attach($pivotData);
+
+        return response()->json([
+            'message' => 'Diseases assigned to patient successfully',
+            'patient' => $patient->load('diseases'),
+        ], 200);
+    }
+
+    /**
+     *   Remove assigned diseases from patient
+     */
+    public function removeDiseases(Request $request, string $id)
+    {
+        $validator = $request->validate([
+            'disease_ids' => 'required|array',
+            'disease_ids.*' => 'required|exists:diseases,id',
+        ]);
+        $patient = Patient::findOrFail($id);
+        $patient->diseases()->detach($validator['disease_ids']);
+        return response()->json([
+            'message' => 'Diseases removed from patient successfully',
+            'patient' => $patient->load('diseases'),
+        ], 200);
     }
 
     /**
@@ -83,7 +127,7 @@ class PatientController extends Controller
      */
     public function show(string $id)
     {
-        $patient = Patient::with(['diseases', 'user', ])->find($id);
+        $patient = Patient::with(['diseases', 'user',])->find($id);
 
         if (!$patient) {
             return response()->json(['message' => 'Patient not found'], 404);
@@ -115,31 +159,30 @@ class PatientController extends Controller
             'commune_id'  => 'sometimes|nullable|integer|exists:communes,id',
             'village_id'  => 'sometimes|nullable|integer|exists:villages,id',
 
-            'diseases' => 'sometimes|array',
-            'diseases.*.disease_id' => 'required|exists:diseases,id',
-            'diseases.*.diagnosed_date' => 'nullable|date',
+            // 'diseases' => 'sometimes|array',
+            // 'diseases.*.disease_id' => 'required|exists:diseases,id',
+            // 'diseases.*.diagnosed_date' => 'nullable|date',
         ]);
 
 
         $patient = Patient::findOrFail($id);
 
-        DB::transaction(function () use ($patient, $validator, $request) {
-            // Update patient info
-            $patient->update($validator);
+        // Update patient info
+        $patient->update($validator);
 
-            // Sync diseases if key is provided
-            if ($request->has('disease')) {
-                $pivotData = [];
+        // // Sync diseases if key is provided
+        // if ($request->has('disease')) {
+        //     $pivotData = [];
 
-                foreach ($request->disease as $d) {
-                    $pivotData[$d['disease_id']] = [
-                        'diagnosed_date' => $d['diagnosed_date'] ?? now()->toDateString(),
-                    ];
-                }
+        //     foreach ($request->disease as $d) {
+        //         $pivotData[$d['disease_id']] = [
+        //             'diagnosed_date' => $d['diagnosed_date'] ?? now()->toDateString(),
+        //         ];
+        //     }
 
-                $patient->diseases()->sync($pivotData);
-            }
-        });
+        //     $patient->diseases()->sync($pivotData);
+        // }
+
 
         return response()->json(
             [
